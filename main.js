@@ -1,3 +1,4 @@
+// External global variables
 const sin = Math.sin;
 const cos = Math.cos;
 const PI = Math.PI;
@@ -5,11 +6,60 @@ const fov = 150;
 const speed = 4;
 const sizeIncrement = 0.005;
 
-let canvas = document.getElementById('canvas');
-let ctx = canvas.getContext('2d');
-let dots = [];
-let windowHalfWidth = (innerWidth / 2);
-let windowHalfHeight = (innerHeight / 2);
+class Universe {
+    constructor(width, height) {
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.dots = [];
+        this.dotsCount = (innerWidth+innerHeight)/20;
+        this.width = width;
+        this.height = height;
+        this.windowHalfWidth = this.width*0.5;
+        this.windowHalfHeight = this.height*0.5;
+    }
+    /**
+     * Initializes the dots on the screen.
+     * Function runs once when the page loads or is resized.
+     *
+     * @return {void} This function does not return anything.
+     */
+    initDots() {
+        this.dots = [];
+        let x, y, z;
+        for (let i = 0; i < this.dotsCount; i++) {
+            // Example: (0.58323 * 1920) - (1920/2)
+            //                      1119 - 960
+            //                         = 159 (result can be negative or positive)
+            x = (Math.random()*innerWidth) - this.windowHalfWidth;
+            // Example: (0.8136 * 1080) - (1080/2)
+            //                      878 - 540
+            //                         = 338 (result can be negative or positive)
+            y = (Math.random()*innerHeight) - this.windowHalfHeight;
+            // Example: (0.34284 * 1920) - (1920/2)
+            //                      658 - 960
+            //                         = -301 (result can be negative or positive)
+            z = (Math.random()*innerWidth) - this.windowHalfWidth;
+            this.dots.push(new Dot(x, y, z));
+
+            //------------- Debugging ---------------//
+            console.log(`x: ${x}, y: ${y}, z: ${z}`);
+        }
+    }
+    setSize() {
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        this.windowHalfWidth = (this.width*0.5);
+        this.windowHalfHeight = (this.height*0.5);
+        this.initDots();
+        this.ctx.fillStyle = '#ffffff';
+        /*if (innerWidth < 800) {
+            ctx.globalAlpha = Math.random() * 0.3;
+        } else {
+            ctx.globalAlpha = Math.random() * 0.8;
+        }*/
+    }
+}
+const universe = new Universe(innerWidth, innerHeight);
 
 class Dot {
     constructor(x, y, z) {
@@ -30,11 +80,11 @@ class Dot {
         // Adding (innerWidth/2) or (innerHeight/2) ensures that x2d and y2d are always relative to the canvas
         // and initially positive on the first draw
         // (since we used (innerWidth/2) and (innerHeight/2) to initialize the x and y values)
-        this.x2d = (this.x * this.scale) + windowHalfWidth;
-        this.y2d = (this.y * this.scale) + windowHalfHeight;
+        this.x2d = (this.x * this.scale) + universe.windowHalfWidth;
+        this.y2d = (this.y * this.scale) + universe.windowHalfHeight;
         this.width += ((this.scale * 0.5) * (sizeIncrement * speed));
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-        ctx.fillRect(this.x2d, this.y2d, this.width, this.width);
+        universe.ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        universe.ctx.fillRect(this.x2d, this.y2d, this.width, this.width);
         //------------- Debugging ---------------//
         // console.log(this.scale)
 
@@ -44,7 +94,7 @@ class Dot {
         this.z -= speed;
         this.alpha += Math.random() * (0.002 * speed);
         if (this.z < -fov) {
-            this.z += (innerWidth+innerHeight)/2;
+            this.z += (innerWidth+innerHeight)*0.5;
             this.width = Math.random() * 2;
             this.alpha = 0;
         }
@@ -52,54 +102,11 @@ class Dot {
     }
 }
 
-function setSize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-    windowHalfWidth = (innerWidth / 2);
-    windowHalfHeight = (innerHeight / 2);
-    initDots();
-    ctx.fillStyle = '#ffffff';
-    /*if (innerWidth < 800) {
-        ctx.globalAlpha = Math.random() * 0.3;
-    } else {
-        ctx.globalAlpha = Math.random() * 0.8;
-    }*/
-}
-
-/**
- * Initializes the dots on the screen.
- * Function runs once when the page loads or is resized.
- *
- * @return {void} This function does not return anything.
- */
-function initDots() {
-    dots = [];
-    let dotsCount = (innerWidth+innerHeight)/20;
-    let x, y, z;
-    for (let i = 0; i < dotsCount; i++) {
-        // Example: (0.58323 * 1920) - (1920/2)
-        //                      1119 - 960
-        //                         = 159 (result can be negative or positive)
-        x = (Math.random()*innerWidth) - windowHalfWidth;
-        // Example: (0.8136 * 1080) - (1080/2)
-        //                      878 - 540
-        //                         = 338 (result can be negative or positive)
-        y = (Math.random()*innerHeight) - windowHalfHeight;
-        // Example: (0.34284 * 1920) - (1920/2)
-        //                      658 - 960
-        //                         = -301 (result can be negative or positive)
-        z = (Math.random()*innerWidth) - windowHalfWidth;
-        dots.push(new Dot(x, y, z));
-
-        //------------- Debugging ---------------//
-        console.log(`x: ${x}, y: ${y}, z: ${z}`);
-    }
-}
-
+//------------- Rendering ---------------//
 (function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < dots.length; i++) {
-        dots[i]
+    universe.ctx.clearRect(0, 0, universe.canvas.width, universe.canvas.height);
+    for (let i = 0; i < universe.dots.length; i++) {
+        universe.dots[i]
             .update()
             .draw()
         ;
@@ -109,5 +116,5 @@ function initDots() {
 })();
 
 //------------- Initialization ---------------//
-setSize();
-addEventListener('resize', setSize);
+universe.setSize();
+addEventListener('resize', universe.setSize);
