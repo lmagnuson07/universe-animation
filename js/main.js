@@ -7,6 +7,12 @@ let universe = new Universe(innerWidth, innerHeight, document.getElementById('ca
 //------------- Rendering ---------------//
 (function render() {
     universe.ctx.clearRect(0, 0, universe.canvas.width, universe.canvas.height);
+    for (let i = 0; i < universe.distantGalaxies.length; i++) {
+        universe.distantGalaxies[i]
+            .update()
+            .draw()
+        ;
+    }
     for (let i = 0; i < universe.stars.length; i++) {
         universe.stars[i]
             .update()

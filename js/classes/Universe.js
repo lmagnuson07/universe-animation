@@ -1,5 +1,6 @@
 import Dot from "./Dot.js";
 import Star from "./Star.js";
+import DistantGalaxy from "./DistantGalaxy.js";
 
 class Universe {
     constructor(width, height, canvas) {
@@ -7,8 +8,10 @@ class Universe {
         this.ctx = canvas.getContext('2d');
         this.dots = [];
         this.stars = [];
+        this.distantGalaxies = [];
         this.dotsCount = (width+height)/20;
-        this.starsCount = (width+height)/50 < 2 ? 2 : (width+height)/500;
+        this.starsCount = (width+height)/500 < 2 ? 2 : (width+height)/500;
+        this.distantGalaxyCount = (width+height)/150 < 2 ? 2 : (width+height)/150;
         this.width = width;
         this.height = height;
         this.windowHalfWidth = this.width*0.5;
@@ -21,6 +24,7 @@ class Universe {
         this.windowHalfHeight = (this.height*0.5);
         this.initDots();
         this.initStars();
+        this.initDistantGalaxies();
         // this.ctx.fillStyle = '#ffffff';
         /*if (innerWidth < 800) {
             ctx.globalAlpha = Math.random() * 0.3;
@@ -60,15 +64,27 @@ class Universe {
         this.stars = [];
         let x, y, z, star;
         for (let i = 0; i < this.starsCount; i++) {
-            x = (Math.random()*this.width) - (this.width*0.5);
-            y = (Math.random()*this.height) - (this.height*0.5);
-            z = (Math.random()*this.width) - (this.width*0.5);
+            y = (Math.random()*this.height) - this.windowHalfHeight;
+            x = (Math.random()*this.width) - this.windowHalfWidth;
+            z = (Math.random()*this.width) - this.windowHalfWidth;
             star = new Star(this, x, y, z);
             star.setRandomColor();
             this.stars.push(star);
 
             //------------- Debugging ---------------//
             // console.log(`x: ${x}, y: ${y}, z: ${z}`);
+        }
+    }
+    initDistantGalaxies() {
+        this.distantGalaxies = [];
+        let x, y, z, galaxy;
+        for (let i = 0; i < this.distantGalaxyCount; i++) {
+            x = (Math.random() * this.width) - (this.width * 0.75);
+            y = (Math.random() * this.height) - (this.height * 0.75);
+            z = (Math.random() * this.width) - (this.width * 0.75);
+            galaxy = new DistantGalaxy(this, x, y, z);
+            galaxy.setRandomColor();
+            this.distantGalaxies.push(galaxy);
         }
     }
     /*getEdgeCoordinates(width, height) {

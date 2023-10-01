@@ -15,7 +15,8 @@ class Star {
         this.maxWidth = 20;
         this.maxHeight = 20;
         this.newSize = this.maxWidth * (Math.random() * 0.6 + 0.4);
-        this.sizeIncrement = Math.random() * 0.00075 + 0.00025;
+        this.sizeIncrement = Math.random() * 0.0025 + 0.00075;
+        this.movementIncrement = 0.25;
         this.randomColor = null;
     }
     draw() {
@@ -42,6 +43,23 @@ class Star {
 
         return this;
     }
+    update() {
+        let speed = config.speed * this.movementIncrement;
+        this.z -= speed * (Math.random() * 0.02 + 0.04);
+        this.movementIncrement *= 1.0075;
+        if (this.width < this.newSize) this.width += (this.sizeIncrement*speed);
+        if (this.height < this.newSize) this.height += (this.sizeIncrement*speed);
+        if (this.z < -config.fov) {
+            this.z = (Math.random()*this.universe.width) - (this.universe.width*0.5);
+            this.x = (Math.random()*this.universe.width) - (this.universe.width*0.5);
+            this.y = (Math.random()*this.universe.height) - (this.universe.height*0.5);
+            this.setRandomColor();
+            this.width = 0.25;
+            this.height = 0.25;
+            this.movementIncrement = 0.25;
+        }
+        return this;
+    }
     createGradient(radius, color) {
         const gradient = this.universe.ctx.createRadialGradient(
             this.x2d, this.y2d, 0, this.x2d, this.y2d, radius
@@ -59,20 +77,6 @@ class Star {
         const randomIndex = Math.floor(Math.random() * keys.length);
         const randomColorKey = keys[randomIndex];
         this.randomColor = colors.stars[randomColorKey];
-    }
-    update() {
-        this.z -= config.speed * (Math.random() * 0.02 + 0.04);
-        if (this.width < this.newSize) this.width += (this.sizeIncrement*config.speed);
-        if (this.height < this.newSize) this.height += (this.sizeIncrement*config.speed);
-        if (this.z < -config.fov) {
-            this.z = (Math.random()*this.universe.width) - (this.universe.width*0.5);
-            this.x = (Math.random()*this.universe.width) - (this.universe.width*0.5);
-            this.y = (Math.random()*this.universe.height) - (this.universe.height*0.5);
-            this.setRandomColor();
-            this.width = 0.25;
-            this.height = 0.25;
-        }
-        return this;
     }
 }
 export default Star;
