@@ -12,8 +12,8 @@ class Star {
         this.y2d = 0;
         this.height = 0.25;
         this.width = 0.25;
-        this.maxWidth = 20;
-        this.maxHeight = 20;
+        this.maxWidth = 10;
+        this.maxHeight = 10;
         this.newSize = this.maxWidth * (Math.random() * 0.6 + 0.4);
         this.sizeIncrement = Math.random() * 0.0025 + 0.00075;
         this.movementIncrement = 0.25;

@@ -12,8 +12,8 @@ class DistantGalaxy {
         this.y2d = 0;
         this.height = Math.random() * 0.05;
         this.width = Math.random() * 0.5;
-        this.maxWidth = Math.random() * 5 + 4;
-        this.maxHeight = Math.random() + 0.5;
+        this.maxWidth = Math.random() + 4;
+        this.maxHeight = Math.random() + 0.25;
         this.newSize = this.maxWidth * (Math.random() * 0.6 + 0.4);
         this.sizeIncrement = Math.random() * 0.0025 + 0.00075;
         this.movementIncrement = 0.025;
